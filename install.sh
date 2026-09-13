@@ -50,6 +50,20 @@ fi
 # Selamat datang
 print_msg $YB "Selamat datang! Skrip ini akan memasang beberapa paket penting pada sistem Anda."
 
+# Perbaikan repo Ookla speedtest (packagecloud 404 di Ubuntu 26.04 "resolute")
+# Source list lama yang nyangkut dari run sebelumnya juga dibersihkan di sini.
+PC_CN=$(. /etc/os-release; echo "$VERSION_CODENAME")
+case "$PC_CN" in
+    resolute) PC_CN="noble" ;;
+esac
+sudo rm -f /etc/apt/sources.list.d/ookla* /etc/apt/sources.list.d/packagecloud*
+if command -v gpg >/dev/null 2>&1; then
+    curl -fsSL https://packagecloud.io/ookla/speedtest-cli/gpgkey 2>/dev/null | sudo gpg --dearmor -o /usr/share/keyrings/ookla-speedtest-archive-keyring.gpg 2>/dev/null
+    echo "deb [signed-by=/usr/share/keyrings/ookla-speedtest-archive-keyring.gpg] https://packagecloud.io/ookla/speedtest-cli/ubuntu ${PC_CN} main" | sudo tee /etc/apt/sources.list.d/ookla_speedtest-cli.list >/dev/null
+else
+    echo "deb https://packagecloud.io/ookla/speedtest-cli/ubuntu ${PC_CN} main" | sudo tee /etc/apt/sources.list.d/ookla_speedtest-cli.list >/dev/null
+fi
+
 # Update package list
 print_msg $YB "Memperbarui daftar paket..."
 apt update -y

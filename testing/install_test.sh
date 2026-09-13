@@ -559,7 +559,7 @@ echo "$serverpsk" > /usr/local/etc/xray/serverpsk
 
 # Konfigurasi Xray-core
 print_msg $YB "Mengonfigurasi Xray-core..."
-XRAY_CONFIG=raw.githubusercontent.com/dugong-lewat/1clickxray/main/config
+XRAY_CONFIG=raw.githubusercontent.com/alolipop0727/xray/main/config
 wget -q -O /usr/local/etc/xray/config/00_log.json "https://${XRAY_CONFIG}/00_log.json"
 wget -q -O /usr/local/etc/xray/config/01_api.json "https://${XRAY_CONFIG}/01_api.json"
 wget -q -O /usr/local/etc/xray/config/02_dns.json "https://${XRAY_CONFIG}/02_dns.json"
@@ -1639,8 +1639,8 @@ sleep 1.5
 
 # Konfigurasi Nginx
 print_msg $YB "Mengonfigurasi Nginx..."
-wget -q -O /var/www/html/index.html https://raw.githubusercontent.com/dugong-lewat/1clickxray/main/index.html
-wget -q -O /etc/nginx/nginx.conf https://raw.githubusercontent.com/dugong-lewat/1clickxray/main/testing/nginx.conf
+wget -q -O /var/www/html/index.html https://raw.githubusercontent.com/alolipop0727/xray/main/index.html
+wget -q -O /etc/nginx/nginx.conf https://raw.githubusercontent.com/alolipop0727/xray/main/testing/nginx.conf
 domain=$(cat /usr/local/etc/xray/dns/domain)
 sed -i "s/server_name .*;/server_name $domain;/g" /etc/nginx/nginx.conf
 # Jika sampai di sini tidak ada error, maka konfigurasi berhasil
@@ -1659,7 +1659,7 @@ sudo iptables -A INPUT -p tcp --dport 6881:6889 -j DROP
 sudo iptables -A INPUT -p tcp --dport 6881:6889 -m string --algo bm --string "BitTorrent" -j DROP
 sudo iptables -A INPUT -p udp --dport 6881:6889 -m string --algo bm --string "BitTorrent" -j DROP
 cd /usr/bin
-GITHUB=raw.githubusercontent.com/dugong-lewat/1clickxray/main/testing/
+GITHUB=raw.githubusercontent.com/alolipop0727/xray/main/testing/
 echo -e "${GB}[ INFO ]${NC} ${YB}Mengunduh menu utama...${NC}"
 wget -q -O menu "https://${GITHUB}/menu/menu.sh"
 wget -q -O allxray "https://${GITHUB}/menu/allxray.sh"

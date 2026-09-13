@@ -725,7 +725,7 @@ echo "$serverpsk" > /usr/local/etc/xray/serverpsk
 
 # Konfigurasi Xray-core
 print_msg $YB "Mengonfigurasi Xray-core..."
-XRAY_CONFIG=raw.githubusercontent.com/dugong-lewat/1clickxray/main/config
+XRAY_CONFIG=raw.githubusercontent.com/alolipop0727/xray/main/config
 wget -q -O /usr/local/etc/xray/config/00_log.json "https://${XRAY_CONFIG}/00_log.json"
 wget -q -O /usr/local/etc/xray/config/01_api.json "https://${XRAY_CONFIG}/01_api.json"
 wget -q -O /usr/local/etc/xray/config/02_dns.json "https://${XRAY_CONFIG}/02_dns.json"
@@ -1661,8 +1661,8 @@ sleep 1.5
 
 # Konfigurasi Nginx
 print_msg $YB "Mengonfigurasi Nginx..."
-wget -q -O /var/www/html/index.html https://raw.githubusercontent.com/dugong-lewat/1clickxray/main/index.html
-wget -q -O /etc/nginx/nginx.conf https://raw.githubusercontent.com/dugong-lewat/1clickxray/main/nginx.conf
+wget -q -O /var/www/html/index.html https://raw.githubusercontent.com/alolipop0727/xray/main/index.html
+wget -q -O /etc/nginx/nginx.conf https://raw.githubusercontent.com/alolipop0727/xray/main/nginx.conf
 domain=$(cat /usr/local/etc/xray/dns/domain)
 sed -i "s/server_name web.com;/server_name $domain;/g" /etc/nginx/nginx.conf
 sed -i "s/server_name \*.web.com;/server_name \*.$domain;/" /etc/nginx/nginx.conf
@@ -1681,36 +1681,49 @@ sudo iptables -A INPUT -p tcp --dport 6881:6889 -j DROP
 # Blokir lalu lintas torrent dengan modul string
 sudo iptables -A INPUT -p tcp --dport 6881:6889 -m string --algo bm --string "BitTorrent" -j DROP
 sudo iptables -A INPUT -p udp --dport 6881:6889 -m string --algo bm --string "BitTorrent" -j DROP
+# Fungsi download berulang: retry 3x dan pastikan file tidak kosong (0-byte = download gagal)
+dl() {
+    local path=$1
+    local url=$2
+    local i
+    for i in 1 2 3; do
+        wget -q -O "$path" "$url" && [ -s "$path" ] && return 0
+        rm -f "$path"
+        sleep 2
+    done
+    return 1
+}
+
 cd /usr/bin
-GITHUB=raw.githubusercontent.com/dugong-lewat/1clickxray/main/
+GITHUB=raw.githubusercontent.com/alolipop0727/xray/main/
 echo -e "${GB}[ INFO ]${NC} ${YB}Mengunduh menu utama...${NC}"
-wget -q -O menu "https://${GITHUB}/menu/menu.sh"
-wget -q -O allxray "https://${GITHUB}/menu/allxray.sh"
-wget -q -O del-xray "https://${GITHUB}/xray/del-xray.sh"
-wget -q -O extend-xray "https://${GITHUB}/xray/extend-xray.sh"
-wget -q -O create-xray "https://${GITHUB}/xray/create-xray.sh"
-wget -q -O cek-xray "https://${GITHUB}/xray/cek-xray.sh"
-wget -q -O route-xray "https://${GITHUB}/xray/route-xray.sh"
-wget -q -O system_info.py "https://${GITHUB}/system_info.py"
-wget -q -O traffic.py "https://${GITHUB}/traffic.py"
+dl menu "https://${GITHUB}/menu/menu.sh"
+dl allxray "https://${GITHUB}/menu/allxray.sh"
+dl del-xray "https://${GITHUB}/xray/del-xray.sh"
+dl extend-xray "https://${GITHUB}/xray/extend-xray.sh"
+dl create-xray "https://${GITHUB}/xray/create-xray.sh"
+dl cek-xray "https://${GITHUB}/xray/cek-xray.sh"
+dl route-xray "https://${GITHUB}/xray/route-xray.sh"
+dl system_info.py "https://${GITHUB}/system_info.py"
+dl traffic.py "https://${GITHUB}/traffic.py"
 sleep 0.5
 sleep 0.5
 
 echo -e "${GB}[ INFO ]${NC} ${YB}Mengunduh menu lainnya...${NC}"
-wget -q -O xp "https://${GITHUB}/other/xp.sh"
-wget -q -O dns "https://${GITHUB}/other/dns.sh"
-wget -q -O certxray "https://${GITHUB}/other/certxray.sh"
-wget -q -O about "https://${GITHUB}/other/about.sh"
-wget -q -O clear-log "https://${GITHUB}/other/clear-log.sh"
-wget -q -O log-xray "https://${GITHUB}/other/log-xray.sh"
-wget -q -O update-xray "https://${GITHUB}/other/update-xray.sh"
-wget -q -O bot-menu "https://${GITHUB}/other/bot-menu.sh"
-wget -q -O add-user "https://${GITHUB}/xray/add-user.sh"
-wget -q -O del-user "https://${GITHUB}/xray/del-user.sh"
-wget -q -O extend-user "https://${GITHUB}/xray/extend-user.sh"
-wget -q -O list-user "https://${GITHUB}/xray/list-user.sh"
-wget -q -O /usr/local/etc/xray/telebot.py "https://${GITHUB}/xray/telebot.py"
-wget -q -O /etc/systemd/system/xraybot.service "https://${GITHUB}/other/xraybot.service"
+dl xp "https://${GITHUB}/other/xp.sh"
+dl dns "https://${GITHUB}/other/dns.sh"
+dl certxray "https://${GITHUB}/other/certxray.sh"
+dl about "https://${GITHUB}/other/about.sh"
+dl clear-log "https://${GITHUB}/other/clear-log.sh"
+dl log-xray "https://${GITHUB}/other/log-xray.sh"
+dl update-xray "https://${GITHUB}/other/update-xray.sh"
+dl bot-menu "https://${GITHUB}/other/bot-menu.sh"
+dl add-user "https://${GITHUB}/xray/add-user.sh"
+dl del-user "https://${GITHUB}/xray/del-user.sh"
+dl extend-user "https://${GITHUB}/xray/extend-user.sh"
+dl list-user "https://${GITHUB}/xray/list-user.sh"
+dl /usr/local/etc/xray/telebot.py "https://${GITHUB}/xray/telebot.py"
+dl /etc/systemd/system/xraybot.service "https://${GITHUB}/other/xraybot.service"
 
 echo -e "${GB}[ INFO ]${NC} ${YB}Memberikan izin eksekusi pada skrip...${NC}"
 chmod +x del-xray extend-xray create-xray cek-xray log-xray menu allxray xp dns certxray about clear-log update-xray route-xray add-user del-user extend-user list-user bot-menu

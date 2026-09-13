@@ -29,6 +29,7 @@ show_menu() {
     echo -e " ${MB}[7]${NC} ${YB}Change Domain${NC}"
     echo -e " ${MB}[8]${NC} ${YB}Cert Acme.sh${NC}"
     echo -e " ${MB}[9]${NC} ${YB}About Script${NC}"
+    echo -e " ${MB}[0]${NC} ${YB}Bot Telegram${NC}"
     echo -e "${BB}————————————————————————————————————————————————————————${NC}"
     echo -e ""
     # echo -e "${RB}Jika kalian mengubah domain maka Akun yang yang sudah dibuat akan hilang, Jadi tolong hati-hati.${NC}"
@@ -48,6 +49,7 @@ handle_menu() {
         7) clear ; dns ;;
         8) clear ; certxray ;;
         9) clear ; about ;;
+        0) clear ; bot-menu ;;
         *) echo -e "${YB}Invalid input${NC}" ; sleep 1 ; show_menu ;;
     esac
 }

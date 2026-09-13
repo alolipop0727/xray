@@ -57,8 +57,8 @@ check_success
 sleep 1
 
 # Install paket pertama
-print_msg $YB "Memasang socat, netfilter-persistent, dan bsdmainutils..."
-apt install socat netfilter-persistent bsdmainutils -y
+print_msg $YB "Memasang socat, netfilter-persistent, dan bsdextrautils..."
+apt install socat netfilter-persistent bsdextrautils -y
 check_success
 sleep 1
 
@@ -76,9 +76,9 @@ sleep 1
 
 # Install paket keempat
 print_msg $YB "Memasang build-essential dan dependensi lainnya..."
-apt install build-essential libpcre3 libpcre3-dev zlib1g zlib1g-dev openssl libssl-dev gcc clang llvm g++ valgrind make cmake debian-keyring debian-archive-keyring apt-transport-https systemd bind9-host gnupg2 ca-certificates lsb-release ubuntu-keyring debian-archive-keyring -y
+apt install build-essential libpcre2-dev zlib1g zlib1g-dev openssl libssl-dev gcc clang llvm g++ valgrind make cmake debian-keyring debian-archive-keyring systemd bind9-host gnupg2 ca-certificates lsb-release ubuntu-keyring -y
 apt install unzip python-is-python3 python3-pip -y
-pip install psutil pandas tabulate rich py-cpuinfo distro requests pycountry geoip2 #--break-system-packages
+pip install psutil pandas tabulate rich py-cpuinfo distro requests pycountry geoip2 --break-system-packages
 check_success
 sleep 1
 
@@ -254,7 +254,16 @@ print_msg $YB "Selamat datang! Skrip ini akan memasang dan mengkonfigurasi WireP
 
 print_msg $YB "Instalasi WireProxy"
 rm -rf /usr/local/bin/wireproxy >> /dev/null 2>&1
-wget -q -O /usr/local/bin/wireproxy https://github.com/dugong-lewat/1clickxray/raw/main/wireproxy
+WP_ARCH=$(uname -m)
+if [ "$WP_ARCH" = "aarch64" ]; then WP_ARCH="arm64"; else WP_ARCH="amd64"; fi
+WP_VER=$(curl -sL https://api.github.com/repos/pufferffish/wireproxy/releases/latest | jq -r '.tag_name')
+if [ -z "$WP_VER" ] || [ "$WP_VER" = "null" ]; then
+    print_msg $RB "Tidak dapat menemukan versi terbaru WireProxy."
+    exit 1
+fi
+curl -sL -o /tmp/wireproxy.tar.gz "https://github.com/pufferffish/wireproxy/releases/download/${WP_VER}/wireproxy_linux_${WP_ARCH}.tar.gz"
+tar xzf /tmp/wireproxy.tar.gz -C /usr/local/bin wireproxy
+rm -f /tmp/wireproxy.tar.gz
 chmod +x /usr/local/bin/wireproxy
 check_success "Gagal instalasi WireProxy."
 print_msg $YB "Mengkonfigurasi WireProxy"
@@ -321,11 +330,11 @@ detect_os() {
 add_nginx_repo() {
   if [ "$OS" == "ubuntu" ]; then
     sudo apt install curl gnupg2 ca-certificates lsb-release ubuntu-keyring -y
-    echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] http://nginx.org/packages/mainline/ubuntu `lsb_release -cs` nginx" | sudo tee /etc/apt/sources.list.d/nginx.list
+    echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] https://nginx.org/packages/mainline/ubuntu `lsb_release -cs` nginx" | sudo tee /etc/apt/sources.list.d/nginx.list
     curl -fsSL https://nginx.org/keys/nginx_signing.key | gpg --dearmor | sudo tee /usr/share/keyrings/nginx-archive-keyring.gpg >/dev/null
   elif [ "$OS" == "debian" ]; then
     sudo apt install curl gnupg2 ca-certificates lsb-release debian-archive-keyring -y
-    echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] http://nginx.org/packages/mainline/debian `lsb_release -cs` nginx" | sudo tee /etc/apt/sources.list.d/nginx.list
+    echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] https://nginx.org/packages/mainline/debian `lsb_release -cs` nginx" | sudo tee /etc/apt/sources.list.d/nginx.list
     curl -fsSL https://nginx.org/keys/nginx_signing.key | gpg --dearmor | sudo tee /usr/share/keyrings/nginx-archive-keyring.gpg >/dev/null
   else
     print_error "OS tidak didukung. Hanya mendukung Ubuntu dan Debian."
@@ -1697,11 +1706,33 @@ wget -q -O about "https://${GITHUB}/other/about.sh"
 wget -q -O clear-log "https://${GITHUB}/other/clear-log.sh"
 wget -q -O log-xray "https://${GITHUB}/other/log-xray.sh"
 wget -q -O update-xray "https://${GITHUB}/other/update-xray.sh"
+wget -q -O bot-menu "https://${GITHUB}/other/bot-menu.sh"
+wget -q -O add-user "https://${GITHUB}/xray/add-user.sh"
+wget -q -O del-user "https://${GITHUB}/xray/del-user.sh"
+wget -q -O extend-user "https://${GITHUB}/xray/extend-user.sh"
+wget -q -O list-user "https://${GITHUB}/xray/list-user.sh"
+wget -q -O /usr/local/etc/xray/telebot.py "https://${GITHUB}/xray/telebot.py"
+wget -q -O /etc/systemd/system/xraybot.service "https://${GITHUB}/other/xraybot.service"
 
 echo -e "${GB}[ INFO ]${NC} ${YB}Memberikan izin eksekusi pada skrip...${NC}"
-chmod +x del-xray extend-xray create-xray cek-xray log-xray menu allxray xp dns certxray about clear-log update-xray route-xray
+chmod +x del-xray extend-xray create-xray cek-xray log-xray menu allxray xp dns certxray about clear-log update-xray route-xray add-user del-user extend-user list-user bot-menu
+[ -f /usr/local/etc/xray/bot.conf ] || printf 'BOT_TOKEN=\nADMIN_CHAT_ID=\n' > /usr/local/etc/xray/bot.conf
 echo -e "${GB}[ INFO ]${NC} ${YB}Persiapan Selesai.${NC}"
-sleep 3
+sleep 2
+
+print_msg $YB "Konfigurasi Bot Telegram (opsional)..."
+read -rp "Setup Telegram Bot sekarang? (y/N): " tg_setup
+if [ "${tg_setup,,}" = "y" ]; then
+    read -rp "Masukkan BOT TOKEN Telegram (dari @BotFather): " tg_token
+    if [ -n "$tg_token" ]; then
+        printf 'BOT_TOKEN=%s\nADMIN_CHAT_ID=\n' "$tg_token" > /usr/local/etc/xray/bot.conf
+        systemctl daemon-reload
+        systemctl enable xraybot
+        systemctl restart xraybot
+        print_msg $GB "Bot aktif. Kirim /start ke bot di Telegram untuk mendaftarkan ADMIN."
+    fi
+fi
+sleep 2
 cd
 echo "0 0 * * * root xp" >> /etc/crontab
 echo "*/3 * * * * root clear-log" >> /etc/crontab

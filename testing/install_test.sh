@@ -51,8 +51,8 @@ check_success
 sleep 1
 
 # Install paket pertama
-print_msg $YB "Memasang socat, netfilter-persistent, dan bsdmainutils..."
-apt install socat netfilter-persistent bsdmainutils -y
+print_msg $YB "Memasang socat, netfilter-persistent, dan bsdextrautils..."
+apt install socat netfilter-persistent bsdextrautils -y
 check_success
 sleep 1
 
@@ -70,9 +70,9 @@ sleep 1
 
 # Install paket keempat
 print_msg $YB "Memasang build-essential dan dependensi lainnya..."
-apt install build-essential libpcre3 libpcre3-dev zlib1g zlib1g-dev openssl libssl-dev gcc clang llvm g++ valgrind make cmake debian-keyring debian-archive-keyring apt-transport-https systemd bind9-host -y
+apt install build-essential libpcre2-dev zlib1g zlib1g-dev openssl libssl-dev gcc clang llvm g++ valgrind make cmake debian-keyring debian-archive-keyring systemd bind9-host -y
 apt install unzip python-is-python3 python3-pip -y
-pip install psutil tabulate rich py-cpuinfo distro requests pandas
+pip install psutil tabulate rich py-cpuinfo distro requests pandas --break-system-packages
 check_success
 sleep 1
 
@@ -265,16 +265,16 @@ check_success "Gagal mendeteksi distribusi Linux."
 # Menentukan URL repository berdasarkan distribusi dan codename
 case "$os" in
     ubuntu)
-        repo_url="http://nginx.org/packages/ubuntu/"
+        repo_url="https://nginx.org/packages/ubuntu/"
         ;;
     debian)
-        repo_url="http://nginx.org/packages/debian/"
+        repo_url="https://nginx.org/packages/debian/"
         ;;
     Ubuntu)
-        repo_url="http://nginx.org/packages/ubuntu/"
+        repo_url="https://nginx.org/packages/ubuntu/"
         ;;
     Debian)
-        repo_url="http://nginx.org/packages/debian/"
+        repo_url="https://nginx.org/packages/debian/"
         ;;
     *)
         print_msg $RB "Distribusi Linux tidak didukung."
@@ -1682,9 +1682,17 @@ wget -q -O about "https://${GITHUB}/other/about.sh"
 wget -q -O clear-log "https://${GITHUB}/other/clear-log.sh"
 wget -q -O log-xray "https://${GITHUB}/other/log-xray.sh"
 wget -q -O update-xray "https://${GITHUB}/other/update-xray.sh"
+wget -q -O bot-menu "https://${GITHUB}/other/bot-menu.sh"
+wget -q -O add-user "https://${GITHUB}/xray/add-user.sh"
+wget -q -O del-user "https://${GITHUB}/xray/del-user.sh"
+wget -q -O extend-user "https://${GITHUB}/xray/extend-user.sh"
+wget -q -O list-user "https://${GITHUB}/xray/list-user.sh"
+wget -q -O /usr/local/etc/xray/telebot.py "https://${GITHUB}/xray/telebot.py"
+wget -q -O /etc/systemd/system/xraybot.service "https://${GITHUB}/other/xraybot.service"
 
 echo -e "${GB}[ INFO ]${NC} ${YB}Memberikan izin eksekusi pada skrip...${NC}"
-chmod +x del-xray extend-xray create-xray cek-xray log-xray menu allxray xp dns certxray about clear-log update-xray route-xray
+chmod +x del-xray extend-xray create-xray cek-xray log-xray menu allxray xp dns certxray about clear-log update-xray route-xray add-user del-user extend-user list-user bot-menu
+[ -f /usr/local/etc/xray/bot.conf ] || printf 'BOT_TOKEN=\nADMIN_CHAT_ID=\n' > /usr/local/etc/xray/bot.conf
 echo -e "${GB}[ INFO ]${NC} ${YB}Persiapan Selesai.${NC}"
 sleep 3
 cd

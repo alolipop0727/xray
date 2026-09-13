@@ -203,7 +203,7 @@ echo "======================================================"
 } | tee "${LOG_DIR}/xray-${user}.log"
 
 if [ -z "${XRAY_NO_RESTART:-}" ]; then
-    systemctl restart xray
+    systemctl restart --no-block xray
 fi
 
 echo -e "${GB}User '$user' created, expire $exp.${NC}"

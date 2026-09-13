@@ -31,7 +31,7 @@ sed -i "/^#&@ $user $exp/,/^},{/d" "$CONF_FILE"
 rm -f "$WWW_DIR/xray-$user.log" "$WWW_DIR/xray-$user.html" "$LOG_DIR/xray-$user.log"
 
 if [ -z "${XRAY_NO_RESTART:-}" ]; then
-    systemctl restart xray
+    systemctl restart --no-block xray
 fi
 
 echo -e "${GB}User '$user' deleted.${NC}"

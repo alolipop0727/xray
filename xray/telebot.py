@@ -581,6 +581,7 @@ def main():
                     cb_id = cb.get("id")
                     cb_msg = cb.get("message") or {}
                     cb_edit = cb_msg.get("message_id")
+                    answer_cb(token, cb_id)
                     reply, kb = handle_callback(token, chat_id, cb_edit, cb_id,
                                                 cdata, data, users)
                     if reply is None:

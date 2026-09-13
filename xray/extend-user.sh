@@ -38,7 +38,7 @@ exp4=$(date -d "$exp3 days" +"%Y-%m-%d")
 sed -i "/^#&@ $user/c\#&@ $user $exp4" "$CONF_FILE"
 
 if [ -z "${XRAY_NO_RESTART:-}" ]; then
-    systemctl restart xray
+    systemctl restart --no-block xray
 fi
 
 echo -e "${GB}User '$user' extended, new expire: $exp4.${NC}"

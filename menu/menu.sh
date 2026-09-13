@@ -25,7 +25,7 @@ show_menu() {
     echo -e " ${MB}[3]${NC} ${YB}Xray Statistics${NC}"
     echo -e " ${MB}[4]${NC} ${YB}Log Create Account${NC}"
     echo -e " ${MB}[5]${NC} ${YB}Update Xray-core${NC}"
-    echo -e " ${MB}[6]${NC} ${YB}Speedtest${NC}"
+    echo -e " ${MB}[6]${NC} ${YB}Speedtest (tidak tersedia)${NC}"
     echo -e " ${MB}[7]${NC} ${YB}Change Domain${NC}"
     echo -e " ${MB}[8]${NC} ${YB}Cert Acme.sh${NC}"
     echo -e " ${MB}[9]${NC} ${YB}About Script${NC}"
@@ -45,7 +45,7 @@ handle_menu() {
         3) clear ; python /usr/bin/traffic.py ; echo " " ; read -n 1 -s -r -p "Press any key to back on menu" ; show_menu ;;
         4) clear ; log-xray ;;
         5) clear ; update-xray ;;
-        6) clear ; speedtest ; echo " " ; read -n 1 -s -r -p "Press any key to back on menu" ; show_menu ;;
+        6) clear ; echo -e "${YB}[ INFO ]${NC} ${RB}Speedtest telah dihapus dari instalasi ini (tidak tersedia).${NC}" ; echo " " ; read -n 1 -s -r -p "Press any key to back on menu" ; show_menu ;;
         7) clear ; dns ;;
         8) clear ; certxray ;;
         9) clear ; about ;;

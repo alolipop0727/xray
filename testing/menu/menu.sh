@@ -44,7 +44,7 @@ handle_menu() {
         3) clear ; python /usr/bin/traffic.py ; echo " " ; read -n 1 -s -r -p "Press any key to back on menu" ; show_menu ;;
         4) clear ; log-xray ;;
         5) clear ; update-xray ;;
-        6) clear ; speedtest ; echo " " ; read -n 1 -s -r -p "Press any key to back on menu" ; show_menu ;;
+        6) clear ; echo -e "${YB}[ INFO ]${NC} ${RB}Speedtest telah dihapus dari instalasi ini (tidak tersedia).${NC}" ; echo " " ; read -n 1 -s -r -p "Press any key to back on menu" ; show_menu ;;
         7) clear ; dns ;;
         8) clear ; certxray ;;
         9) clear ; about ;;

@@ -59,7 +59,7 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/alolipop0727/xray/main/i
 - Instalasi `pip` kini memakai `--break-system-packages` (Python modern / PEP 668)
 - Repo `nginx.org` memakai URL `https` (mainline mendukung Ubuntu 26.04)
 - `wireproxy` kini diunduh langsung dari rilis resmi [pufferffish/wireproxy](https://github.com/pufferffish/wireproxy/releases) (mengikuti tag terbaru, otomatis sesuai arsitektur VPS), bukan binary versi lama yang disertakan di repo
-- **Repo Ookla speedtest-cli (packagecloud) belum menyediakan rilis untuk Ubuntu 26.04** — installer otomatis memakai codename fallback (`noble`) dan menulis ulang source list agar `apt update` tidak gagal 404
+- **Speedtest CLI dihapus dari instalasi** — repo Ookla (packagecloud) belum menyediakan rilis untuk Ubuntu 26.04 dan bikin `apt update` gagal 404; installer kini tidak menginstal speedtest lagi dan otomatis membersihkan source-list stale dari run lama. Menu `[6] Speedtest` ikut dinonaktifkan.
 
 ### 2. Bot Telegram (baru)
 Akhir setup akan ditanya: **"Setup Telegram Bot sekarang? (y/n)"**

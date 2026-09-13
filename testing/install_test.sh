@@ -44,6 +44,10 @@ print_error() {
 # Selamat datang
 print_msg $YB "Selamat datang! Skrip ini akan memasang beberapa paket penting pada sistem Anda."
 
+# Bersihkan sisa repo Ookla speedtest dari run installer lama
+# (packagecloud tidak punya rilis utk Ubuntu 26.04 "resolute" -> 404 saat apt update)
+sudo rm -f /etc/apt/sources.list.d/ookla* /etc/apt/sources.list.d/packagecloud* /etc/apt/sources.list.d/ookla_speedtest-cli.list
+
 # Update package list
 print_msg $YB "Memperbarui daftar paket..."
 apt update -y
@@ -224,26 +228,8 @@ sleep 3
 clear
 
 # Menampilkan pesan interaktif
-print_msg $YB "Selamat datang! Skrip ini akan menginstal Speedtest CLI dan mengatur zona waktu Anda."
+print_msg $YB "Mengatur zona waktu Anda..."
 sleep 3
-
-# Mengunduh dan menginstal Speedtest CLI
-print_msg $YB "Mengunduh dan menginstal Speedtest CLI..."
-PC_CN=$(. /etc/os-release; echo "$VERSION_CODENAME")
-case "$PC_CN" in
-    resolute) PC_CN="noble" ;; # packagecloud belum menyediakan rilis resmi utk Ubuntu 26.04
-esac
-if ! command -v gpg >/dev/null 2>&1; then
-    sudo apt-get update &>/dev/null
-    sudo apt-get install -y gnupg2 &>/dev/null
-fi
-curl -fsSL https://packagecloud.io/ookla/speedtest-cli/gpgkey | sudo gpg --dearmor -o /usr/share/keyrings/ookla-speedtest-archive-keyring.gpg &>/dev/null
-# Hapus source list lama (jika ada dari instalasi sebelumnya yang gagal), lalu set ulang
-sudo rm -f /etc/apt/sources.list.d/ookla* /etc/apt/sources.list.d/packagecloud*
-echo "deb [signed-by=/usr/share/keyrings/ookla-speedtest-archive-keyring.gpg] https://packagecloud.io/ookla/speedtest-cli/ubuntu ${PC_CN} main" | sudo tee /etc/apt/sources.list.d/ookla_speedtest-cli.list >/dev/null
-sudo apt-get update &>/dev/null
-sudo apt-get install -y speedtest &>/dev/null
-print_msg $YB "Speedtest CLI berhasil diinstal."
 
 # Mengatur zona waktu ke Asia/Jakarta
 print_msg $YB "Mengatur zona waktu ke Asia/Jakarta..."
